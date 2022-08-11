@@ -1,0 +1,36 @@
+.container{
+  display: flex;
+  float:1 ;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+.wrapper{
+  display: flex;
+  flex-direction: row;
+  
+}
+.wrapper div{
+  padding: 10px;
+}
+.wrapper div:hover{
+  cursor: pointer;
+  background-color: #333;
+  border: 1px solid aliceblue;
+}
+.cardImage{
+  width: 150px;
+  height: 150px;
+  display: flex;
+  margin: 25px;
+  justify-content: center;
+  align-items: center;
+}
+.text-link  {
+  color: inherit;
+  text-decoration: inherit;
+}                          
+.cardImage img{
+  width: 100px;
+}
