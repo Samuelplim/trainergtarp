@@ -1,0 +1,18 @@
+.butGame{
+  cursor: pointer;
+  background-color: #333;
+  border: 1px solid #222;
+  margin-right: 20px;
+}
+.butGame img:hover{
+  background-color: #555;
+}
+.butGame img{
+  background-color: #333;
+  height: 100px;
+  width: 100px;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}

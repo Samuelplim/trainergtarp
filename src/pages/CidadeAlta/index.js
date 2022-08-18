@@ -11,6 +11,7 @@ import pnglockpick from "../../assets/lockpick.png";
 import pngtnt from "../../assets/tnt.png";
 
 import "./styles.css";
+import ButtonGame from "../../components/ButtonGame";
 
 const Status = {
   inicial: 0,
@@ -98,9 +99,8 @@ export default function CidadeAlta() {
 
     window.removeEventListener("keydown", onKey);
   }
-
+  window.addEventListener("keydown", onKey);
   React.useEffect(() => {
-    window.addEventListener("keydown", onKey);
     if (seg === 5) {
       setAlertState(AlertsPopUpProps.falhaTempo);
       setAlertOn(true); //ativa o alerta de falha
@@ -108,22 +108,14 @@ export default function CidadeAlta() {
       mudarTimer(false); //Parar o UserTime
       setPosicaoArray(-2);
     }
-    console.log(seg);
   });
+  console.log(pngtnt);
   return (
     <div id="cidadealta">
       <h1>Cidade Alta</h1>
       <section className="menuGame">
-        <div>
-          <button className="butGame">
-            <img src={pnglockpick} alt="Caixa eletrônico" />
-          </button>
-        </div>
-        <div>
-          <button className="butGame" onClick={caixaeletronico}>
-            <img src={pngtnt} alt="Roubo de loja" />
-          </button>
-        </div>
+        <ButtonGame srcPng={pnglockpick} />
+        <ButtonGame srcPng={pngtnt} onPress={caixaeletronico} />
       </section>
 
       {AlertOn ? (
@@ -144,7 +136,9 @@ export default function CidadeAlta() {
             );
           })}
         </div>
-        <ProgressBarTime count="5" />
+        <div className="wrapperTimer">
+          <ProgressBarTime count="5" />
+        </div>
       </section>
     </div>
   );

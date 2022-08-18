@@ -1,12 +1,13 @@
 .progress-bar{
-  width: 100%;
+  width: 250px;
   height: 50px;
   background-color: gray;
   border-radius: 8px;
 }
+
 span{
   display: block;
-  background-color: green;
+ background-color: green;
  height: 100%;
  border-radius: 8px;
  max-width: 100%;
