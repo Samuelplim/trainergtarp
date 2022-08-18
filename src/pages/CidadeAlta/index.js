@@ -65,6 +65,7 @@ export default function CidadeAlta() {
     } else {
       //Quando errar
       let newList = ArrayDigitos;
+
       newList[PosicaoArray].status = Status.falha;
       SetArrayDigitos(newList); // Altera o status do digito que errou
 
@@ -126,15 +127,17 @@ export default function CidadeAlta() {
 
       <section className="wrapperGame">
         <div className="wrapperArrayGame">
-          {ArrayDigitos.map((digito, index) => {
-            return (
-              <ViewDigitoGame
-                key={index}
-                digito={digito.value}
-                status={digito.status}
-              />
-            );
-          })}
+          {ArrayDigitos.length > 1
+            ? ArrayDigitos.map((digito, index) => {
+                return (
+                  <ViewDigitoGame
+                    key={index}
+                    digito={digito.value}
+                    status={digito.status}
+                  />
+                );
+              })
+            : true}
         </div>
         <div className="wrapperTimer">
           <ProgressBarTime count="5" />
