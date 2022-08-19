@@ -34,6 +34,7 @@ export default function CidadeAlta() {
   const [AlertOn, setAlertOn] = React.useState(false);
   const [AlertState, setAlertState] = React.useState("");
   const [PosicaoArray, setPosicaoArray] = React.useState(-1);
+  window.addEventListener("keydown", onKey);
 
   const { seg, mudarTimer } = useContext(TimerContext);
 
@@ -82,27 +83,25 @@ export default function CidadeAlta() {
     if (keyPress === " " && PosicaoArray === -2) {
       //reiniciar o jogo
       caixaeletronico();
-      mudarTimer(true);
-      setAlertState("");
       setAlertOn(false);
       setPosicaoArray(0);
+      mudarTimer(true);
     }
     if (keyPress === " " && PosicaoArray === -1) {
       //Disparar inicio do jogo
       mudarTimer(true);
-      setAlertState("");
       setAlertOn(false);
       setPosicaoArray(0);
     }
-    if (PosicaoArray >= 0 && PosicaoArray < 8) {
+    if (PosicaoArray > -1 && PosicaoArray < 8) {
       verificarPosicaoAtual(keyPress);
     }
 
     window.removeEventListener("keydown", onKey);
   }
-  window.addEventListener("keydown", onKey);
+
   React.useEffect(() => {
-    if (seg === 5) {
+    if (seg > 5) {
       setAlertState(AlertsPopUpProps.falhaTempo);
       setAlertOn(true); //ativa o alerta de falha
 
@@ -110,7 +109,6 @@ export default function CidadeAlta() {
       setPosicaoArray(-2);
     }
   });
-  console.log(pngtnt);
   return (
     <div id="cidadealta">
       <h1>Cidade Alta</h1>

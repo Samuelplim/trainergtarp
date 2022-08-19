@@ -1,34 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 export const TimerContext = React.createContext();
 
 export const TimerProvider = ({ children }) => {
   const [seg, setSeg] = React.useState(0);
-  const [intervalId, setIntervalId] = React.useState(0);
-  const [boolInit, setBoolInit] = React.useState(false);
+  const [isRunning, setIsRunning] = React.useState(false);
 
   const mudarTimer = (bool) => {
-    setBoolInit(bool);
+    setIsRunning((presBool) => bool);
   }; //Função para mudar o estado do cronometro
 
-  React.useEffect(() => {
-    if (boolInit === true) {
-      if (intervalId) {
-        clearInterval(intervalId);
-        setInterval(0);
-        return;
-      }
-      const newintervalId = setInterval(() => {
+  console.log("Segundos now:  " + seg);
+  useEffect(() => {
+    if (isRunning) {
+      const newintervalId = window.setInterval(() => {
         setSeg((prevSS) => prevSS + 1);
       }, 1000);
-      setIntervalId(newintervalId); //função executada a cada 1s
-    }
-    if (boolInit === false) {
-      const newIntervalId = clearInterval(intervalId);
-      setIntervalId(newIntervalId);
+      return () => window.clearInterval(newintervalId);
+    } else {
       setSeg(0);
     }
-  }, [boolInit]);
+  }, [isRunning]);
 
   return (
     <TimerContext.Provider value={{ seg, mudarTimer }}>
