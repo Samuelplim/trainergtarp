@@ -98,7 +98,6 @@ export default function CidadeAlta() {
 
   useEffect(() => {
     if (keyPress === " " && casesGame === 0) {
-      ""
       setCasesGame(2);
       mudarTimer(true);
       setAlertText("");
