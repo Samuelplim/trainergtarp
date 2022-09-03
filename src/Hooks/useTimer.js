@@ -1,16 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, createContext } from "react";
+import useEventListener from "@use-it/event-listener";
 
-export const TimerContext = React.createContext();
+export const TimerContext = createContext();
 
 export const TimerProvider = ({ children }) => {
-  const [seg, setSeg] = React.useState(0);
-  const [isRunning, setIsRunning] = React.useState(false);
+  const [seg, setSeg] = useState(0);
+  const [keyPress, setKeyPress] = useState(); //Tecla pressionada
+  const [isRunning, setIsRunning] = useState(false); //Ativa o timer
 
   const mudarTimer = (bool) => {
-    setIsRunning((presBool) => bool);
+    setIsRunning(bool);
   }; //Função para mudar o estado do cronometro
 
-  console.log("Segundos now:  " + seg);
+  useEventListener("keydown", (event) => {
+    setKeyPress(() => event.key.toUpperCase());
+  });
+
   useEffect(() => {
     if (isRunning) {
       const newintervalId = window.setInterval(() => {
@@ -23,7 +28,7 @@ export const TimerProvider = ({ children }) => {
   }, [isRunning]);
 
   return (
-    <TimerContext.Provider value={{ seg, mudarTimer }}>
+    <TimerContext.Provider value={{ seg, mudarTimer, keyPress, isRunning }}>
       {children}
     </TimerContext.Provider>
   );

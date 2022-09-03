@@ -1,14 +1,9 @@
 import React from "react";
 import "./styles.css";
-const Status = {
-  0: "iniciar",
-  1: "falha",
-  2: "ocultar",
-};
 
-export default function AlertPopUp({ alertText, status }) {
+export default function AlertPopUp({ alertText }) {
   return (
-    <div className={`alertContainer ${Status[status]}`}>
+    <div className={`alertContainer`}>
       <p>{alertText}</p>
     </div>
   );

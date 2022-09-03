@@ -6,11 +6,13 @@ import "./styles.css";
 export default function ProgressBarTime() {
   //cout = 0s
   //Tempo atual do cronometro
-  const { seg } = useContext(TimerContext);
+  const { isRunning, seg } = useContext(TimerContext);
 
   return (
     <div className="progress-bar">
-      <span style={{ width: `${seg * 20}%` }}></span>
+      <span
+        style={{ animation: `${isRunning ? "loading" : 0} 5s linear` }}
+      ></span>
       <p>Tempo do jogo: {seg}s</p>
     </div>
   );

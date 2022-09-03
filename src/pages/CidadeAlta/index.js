@@ -1,26 +1,20 @@
-import React from "react";
-
-import { useContext } from "react";
-import { TimerContext } from "../../Hooks/useTimer";
+import React, { useContext, useEffect, useState } from "react";
 
 import ProgressBarTime from "../../components/ProgressBarTime";
 import ViewDigitoGame from "../../components/ViewDigitoGame";
-import AlertPopUp from "../../components/AlertsPopUp";
+import ButtonGame from "../../components/ButtonGame";
+import AlertsPopUp from "../../components/AlertsPopUp";
+import { TimerContext } from "../../Hooks/useTimer";
 
 import pnglockpick from "../../assets/lockpick.png";
 import pngtnt from "../../assets/tnt.png";
 
 import "./styles.css";
-import ButtonGame from "../../components/ButtonGame";
 
 const Status = {
   inicial: 0,
   ok: 1,
   falha: 2,
-};
-const ArrayDigitosProps = {
-  value: "",
-  status: Status,
 };
 const AlertsPopUpProps = {
   iniciar: "Aperte espaço para inicar o jogo",
@@ -28,110 +22,119 @@ const AlertsPopUpProps = {
   ocultar: "",
   falhaTempo: "Lento demais, pressione espaço para recomeçar",
 };
+/*caso 0 - Jogo não iniciado 
+caso 1 - perdeu
+caso 2 - jogando
+*/
 
 export default function CidadeAlta() {
-  const [ArrayDigitos, SetArrayDigitos] = React.useState([ArrayDigitosProps]);
-  const [AlertOn, setAlertOn] = React.useState(false);
-  const [AlertState, setAlertState] = React.useState("");
-  const [PosicaoArray, setPosicaoArray] = React.useState(-1);
-  window.addEventListener("keydown", onKey);
+  const [arrayDigitos, setArrayDigitos] = useState([]);
+  const [posicaoArray, setPosicaoArray] = useState(0);
+  const [casesGame, setCasesGame] = useState(0);
+  const [alertText, setAlertText] = useState("");
+  const [statusDigitos, setStatusDigitos] = useState([]);
 
-  const { seg, mudarTimer } = useContext(TimerContext);
+  const { seg, mudarTimer, keyPress } = useContext(TimerContext);
 
-  function caixaeletronico() {
-    // tamanho 8 digitos
-    // Disparo ao clicar na bomba
-    let result = [];
-    const digitos = ["A", "S", "D", "Q", "W", "E"];
-    for (let index = 0; index < 8; index++) {
-      let resul = Math.floor(Math.random() * (6 - 0) + 0);
-      result.push({
-        value: digitos[resul],
-        status: Status.inicial,
-      });
-    }
-    SetArrayDigitos(result); //Array
-    // Abrir alerta
-    setAlertOn(true);
-    setAlertState(AlertsPopUpProps.iniciar);
-  }
+  const preencherArray = () => {
+    return new Promise((resolve) => {
+      let result = [];
+      const digitos = ["A", "S", "D", "Q", "W", "E"];
+      // tamanho 8 digitos
+      // preenche o ArrayAleatoriamente
 
-  function verificarPosicaoAtual(keyPress) {
-    if (keyPress === ArrayDigitos[PosicaoArray].value) {
+      for (let index = 0; index < 8; index++) {
+        let resul = Math.floor(Math.random() * (6 - 0) + 0);
+        if (digitos[resul] !== result[index - 1]) {
+          result.push(digitos[resul]);
+        } else {
+          index--;
+        }
+      }
+      setArrayDigitos(result);
+      resolve(result);
+    });
+  };
+
+  const verificarPosicaoAtual = () => {
+    console.log(arrayDigitos);
+    console.log(posicaoArray);
+    console.log(
+      "tecla pressionada: " + keyPress + "Array: " + arrayDigitos[posicaoArray]
+    );
+
+    if (keyPress === arrayDigitos[posicaoArray]) {
       // Quando acertar
-      let newList = ArrayDigitos;
-      newList[PosicaoArray].status = Status.ok;
-      SetArrayDigitos(newList);
-      setPosicaoArray(PosicaoArray + 1);
+      setStatusDigitos((ex) =>
+        ex.map((value, index) => {
+          if (index === posicaoArray) {
+            return 1;
+          }
+          return value;
+        })
+      );
+      setPosicaoArray((ex) => ex + 1);
     } else {
       //Quando errar
-      let newList = ArrayDigitos;
-
-      newList[PosicaoArray].status = Status.falha;
-      SetArrayDigitos(newList); // Altera o status do digito que errou
-
-      setAlertState(AlertsPopUpProps.falha);
-      setAlertOn(true); //ativa o alerta de falha
-
-      mudarTimer(false); //Parar o UserTime
-      setPosicaoArray(-2);
+      setStatusDigitos((ex) =>
+        ex.map((value, index) => {
+          if (index === posicaoArray) {
+            return 2;
+          }
+          return value;
+        })
+      );
+      setCasesGame(1);
     }
-  }
+  };
 
-  function onKey(e) {
-    let keyPress = e.key.toUpperCase();
-    if (keyPress === " " && PosicaoArray === -2) {
-      //reiniciar o jogo
-      caixaeletronico();
-      setAlertOn(false);
-      setPosicaoArray(0);
+  const iniciarJogo = async () => {
+    await preencherArray();
+    setStatusDigitos([0, 0, 0, 0, 0, 0, 0, 0]);
+    setPosicaoArray(0);
+    setCasesGame(0);
+    setAlertText("Aperte espaço para iniciar");
+  };
+
+  useEffect(() => {
+    if (keyPress === " " && casesGame === 0) {
+      ""
+      setCasesGame(2);
       mudarTimer(true);
+      setAlertText("");
     }
-    if (keyPress === " " && PosicaoArray === -1) {
-      //Disparar inicio do jogo
-      mudarTimer(true);
-      setAlertOn(false);
-      setPosicaoArray(0);
+    if (arrayDigitos.length > 7 && casesGame === 2) {
+      verificarPosicaoAtual();
     }
-    if (PosicaoArray > -1 && PosicaoArray < 8) {
-      verificarPosicaoAtual(keyPress);
-    }
+  }, [keyPress]);
 
-    window.removeEventListener("keydown", onKey);
-  }
-
-  React.useEffect(() => {
-    if (seg > 5) {
-      setAlertState(AlertsPopUpProps.falhaTempo);
-      setAlertOn(true); //ativa o alerta de falha
-
-      mudarTimer(false); //Parar o UserTime
-      setPosicaoArray(-2);
+  useEffect(() => {
+    if (seg > 5 || casesGame === 1) {
+      //perdeu
+      setAlertText("Você morreu pressione novamente na bomba");
+      mudarTimer(false);
     }
-  });
+  }, [seg, casesGame]);
+
   return (
     <div id="cidadealta">
+      <p>{"Tecla presionada: " + keyPress}</p>
+      <p>{arrayDigitos}</p>
       <h1>Cidade Alta</h1>
       <section className="menuGame">
         <ButtonGame srcPng={pnglockpick} />
-        <ButtonGame srcPng={pngtnt} onPress={caixaeletronico} />
+        <ButtonGame srcPng={pngtnt} onPress={iniciarJogo} />
       </section>
-
-      {AlertOn ? (
-        <AlertPopUp status={"iniciar"} alertText={AlertState} />
-      ) : (
-        true
-      )}
 
       <section className="wrapperGame">
         <div className="wrapperArrayGame">
-          {ArrayDigitos.length > 1
-            ? ArrayDigitos.map((digito, index) => {
+          {arrayDigitos.length > 1
+            ? arrayDigitos.map((digito, index) => {
                 return (
                   <ViewDigitoGame
                     key={index}
-                    digito={digito.value}
-                    status={digito.status}
+                    digito={digito}
+                    status={statusDigitos[index]}
                   />
                 );
               })
@@ -140,6 +143,7 @@ export default function CidadeAlta() {
         <div className="wrapperTimer">
           <ProgressBarTime count="5" />
         </div>
+        <AlertsPopUp alertText={alertText} />
       </section>
     </div>
   );
